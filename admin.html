@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SELLIFY Admin — Manage Store</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{fontFamily:{display:['"Instrument Serif"','serif'],sans:['Inter','sans-serif']}}}}</script>
+  <style>
+    body{font-family:Inter,sans-serif}
+    .font-display{font-family:"Instrument Serif",serif}
+  </style>
+</head>
+<body class="bg-[#fcfaf8] text-[#0a0a0a]">
+  <!-- Login -->
+  <div id="login-screen" class="min-h-screen grid place-items-center p-6">
+    <div class="w-full max-w-[400px] bg-white rounded-[24px] p-8 shadow-xl border border-black/5">
+      <p class="font-display text-3xl">SELLIFY Admin</p>
+      <p class="text-sm text-black/50 mt-2">Manage products, inventory, and 3D assets. Password is <span class="font-medium text-black">admin123</span></p>
+      <form id="login-form" class="mt-8 space-y-4">
+        <input id="login-pass" type="password" placeholder="Enter password" class="w-full bg-[#f5f3f0] rounded-full px-5 py-4 text-sm outline-none focus:ring-2 focus:ring-black/10" />
+        <button class="w-full bg-black text-white h-12 rounded-full text-sm font-medium">Enter Dashboard</button>
+        <p id="login-error" class="hidden text-xs text-red-500 text-center">Incorrect password</p>
+      </form>
+      <a href="index.html" class="block text-center text-xs underline mt-6 text-black/50">← Back to store</a>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboard" class="hidden min-h-screen">
+    <header class="sticky top-0 z-30 bg-[#fcfaf8]/80 backdrop-blur border-b border-black/5">
+      <div class="max-w-[1440px] mx-auto px-6 md:px-10 h-[64px] flex items-center justify-between">
+        <div class="flex items-center gap-6">
+          <span class="font-display text-2xl">SELLIFY Admin</span>
+          <span class="hidden md:inline-flex bg-black text-white text-[10px] tracking-[0.2em] uppercase px-3 py-1 rounded-full">3D Store Builder</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="export-btn" class="h-10 px-5 rounded-full border border-black/10 text-sm hover:bg-black hover:text-white transition">Export JSON</button>
+          <button id="import-btn" class="h-10 px-5 rounded-full bg-[#f5f3f0] text-sm hover:bg-black hover:text-white transition">Import</button>
+          <input id="import-file" type="file" accept=".json" class="hidden" />
+          <a href="index.html" class="h-10 px-5 grid place-items-center rounded-full bg-black text-white text-sm">View Store</a>
+          <button id="logout-btn" class="w-10 h-10 grid place-items-center rounded-full bg-[#f5f3f0]">⎋</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-[1440px] mx-auto px-6 md:px-10 py-8 grid lg:grid-cols-[280px_1fr] gap-8 items-start">
+      <!-- Sidebar -->
+      <aside class="lg:sticky lg:top-[88px] space-y-6">
+        <div class="bg-white rounded-[24px] p-6 border border-black/5">
+          <h4 class="font-medium text-sm">Store Stats</h4>
+          <div class="mt-6 grid grid-cols-2 gap-4">
+            <div class="bg-[#f5f3f0] rounded-2xl p-4"><p id="stat-total" class="font-display text-2xl">0</p><p class="text-[11px] uppercase tracking-wide text-black/50 mt-1">Products</p></div>
+            <div class="bg-[#f5f3f0] rounded-2xl p-4"><p id="stat-value" class="font-display text-2xl">$0</p><p class="text-[11px] uppercase tracking-wide text-black/50 mt-1">Inventory value</p></div>
+            <div class="bg-[#f5f3f0] rounded-2xl p-4"><p id="stat-low" class="font-display text-2xl">0</p><p class="text-[11px] uppercase tracking-wide text-black/50 mt-1">Low stock</p></div>
+            <div class="bg-[#f5f3f0] rounded-2xl p-4"><p class="font-display text-2xl">4.8</p><p class="text-[11px] uppercase tracking-wide text-black/50 mt-1">Avg rating</p></div>
+          </div>
+        </div>
+
+        <div class="bg-[#0a0a0a] text-white rounded-[24px] p-6">
+          <p class="text-xs tracking-[0.2em] uppercase opacity-50">3D Features</p>
+          <h4 class="font-display text-xl mt-3 leading-tight">Your store is 3D-native.</h4>
+          <ul class="mt-4 space-y-2 text-xs text-white/60">
+            <li>• Three.js hero with mouse parallax</li>
+            <li>• Product 3D viewer (drag to rotate)</li>
+            <li>• Floating particles & glassmorphism</li>
+            <li>• Ready for GLTF model uploads</li>
+          </ul>
+          <div class="mt-6 p-3 rounded-xl bg-white/10 text-[11px]">Tip: Add a <span class="text-white font-medium">model3d</span> URL (GLB) in product JSON to enable AR-ready viewer.</div>
+        </div>
+
+        <div class="bg-white rounded-[24px] p-6 border border-black/5">
+          <h4 class="font-medium text-sm">Quick Actions</h4>
+          <div class="mt-4 space-y-2">
+            <button id="seed-reset" class="w-full h-11 rounded-full bg-[#f5f3f0] text-sm hover:bg-black hover:text-white transition">Reset to Demo Data</button>
+            <button id="clear-storage" class="w-full h-11 rounded-full border border-black/10 text-sm hover:bg-black hover:text-white transition">Clear All Storage</button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main -->
+      <div class="space-y-8">
+        <!-- Add Product -->
+        <div class="bg-white rounded-[24px] p-6 md:p-8 border border-black/5">
+          <div class="flex justify-between items-start gap-4">
+            <div>
+              <h2 class="font-display text-3xl leading-none">Add / Edit Product</h2>
+              <p class="text-sm text-black/50 mt-2">All fields support live preview. Images can be Unsplash URLs or your CDN links. 3D model field accepts .glb URL.</p>
+            </div>
+            <button id="form-toggle" class="md:hidden w-10 h-10 grid place-items-center rounded-full bg-[#f5f3f0]">+</button>
+          </div>
+
+          <form id="product-form" class="mt-8 grid md:grid-cols-2 gap-5">
+            <input type="hidden" id="f-id" />
+            <div class="md:col-span-2 grid md:grid-cols-2 gap-5">
+              <label class="space-y-2"><span class="text-xs uppercase tracking-wide font-medium">Title *</span><input id="f-title" required placeholder="Wool Blend Overcoat" class="w-full bg-[#f5f3f0] rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-black/10" /></label>
+              <label class="space-y-2"><span class="text-xs uppercase tracking-wide font-medium">Brand</span><input id="f-brand" placeholder="Studio Noir" class="w-full bg-[#f5f3f0] rounded-xl px-4 py-3 text-sm outline-none" /></label>
+            </div>
+
+            <div class="grid grid-cols-2 gap-5">
+              <label class="space-y-2"><span class="text-xs uppercase tracking-wide font-medium">Category *</span>
+                <select id="f-category" class="w-full bg-[#f5f3f0] rounded-xl px-4 py-3 text-sm outline-none">
+                  <option>Apparel</option><option>Electronics</option><option>Footwear</option><option>Accessories</option><option>Home</option>
+                </select>
+              </label>
+              <label class="space-y-2"><span class="text-xs uppercase tracking-wide font-medium">Subcategory</span><input id="f-subcategory" placeholder="Outerwear" class="w-full bg-[#f5f3f0] rounded-xl px-4 py-3 text-sm outline-none" /></label>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3">
+              <label class="space-y-2"><span class="text-xs uppercase tracking-wide font-medium">Price *</span><input id="f-price" type="number" step="0.01" required placeholder="298" class="w-full bg-[#f5f3f0] rounded-xl px-4 py-3 text-sm outline-none" /></label>
+              <label class="space-y-2"><span class="text-xs uppercase tracking-wide font-medium">Compare At</span><input id="f-compare" type="number" step="0.01" placeholder="420" class="w-full bg-[#f5f3f0] rounded-xl px-4 py-3 text-sm outline-none" /></label>
+              <label class="space-y-2"><span class="text-xs uppercase tracking-wide font-medium">Inventory</span><input id="f-inventory" type="number" placeholder="32" class="w-full bg-[#f5f3f0] rounded-xl px-4 py-3 text-sm outline-none" /></label>
+            </div>
+
+            <label class="space-y-2 md:col-span-2"><span class="text-xs uppercase tracking-wide font-medium">Images (comma separated URLs) *</span><textarea id="f-images" required placeholder="https://images.unsplash.com/..., https://..." class="w-full bg-[#f5f3f0] rounded-xl px-4 py-3 text-sm outline-none min-h-[80px]"></textarea></label>
+
+            <label class="space-y-2"><span class="text-xs uppercase tracking-wide font-medium">Colors (Name:Hex, comma)</span><input id="f-colors" placeholder="Camel:#C19A6B, Charcoal:#2B2B2B" class="w-full bg-[#f5f3f0] rounded-xl px-4 py-3 text-sm outline-none" /></label>
+            <label class="space-y-2"><span class="text-xs uppercase tracking-wide font-medium">Sizes (comma)</span><input id="f-sizes" placeholder="XS,S,M,L,XL" class="w-full bg-[#f5f3f0] rounded-xl px-4 py-3 text-sm outline-none" /></label>
+
+            <label class="space-y-2 md:col-span-2"><span class="text-xs uppercase tracking-wide font-medium">Description</span><textarea id="f-desc" placeholder="Product story..." class="w-full bg-[#f5f3f0] rounded-xl px-4 py-3 text-sm outline-none min-h-[100px]"></textarea></label>
+
+            <label class="space-y-2"><span class="text-xs uppercase tracking-wide font-medium">Badge</span><input id="f-badge" placeholder="Bestseller, New, etc" class="w-full bg-[#f5f3f0] rounded-xl px-4 py-3 text-sm outline-none" /></label>
+            <label class="space-y-2"><span class="text-xs uppercase tracking-wide font-medium">Rating (0-5)</span><input id="f-rating" type="number" step="0.1" min="0" max="5" placeholder="4.8" class="w-full bg-[#f5f3f0] rounded-xl px-4 py-3 text-sm outline-none" /></label>
+
+            <label class="space-y-2 md:col-span-2"><span class="text-xs uppercase tracking-wide font-medium">3D Model URL (GLB) — optional for advanced 3D</span><input id="f-model" placeholder="https://example.com/model.glb" class="w-full bg-[#f5f3f0] rounded-xl px-4 py-3 text-sm outline-none" /></label>
+
+            <div class="md:col-span-2 flex gap-3 pt-2">
+              <button type="submit" class="bg-black text-white px-8 h-12 rounded-full text-sm font-medium">Save Product</button>
+              <button type="button" id="form-reset" class="h-12 px-6 rounded-full border border-black/10 text-sm">Reset Form</button>
+              <span id="form-status" class="self-center text-xs text-black/50 ml-2"></span>
+            </div>
+          </form>
+        </div>
+
+        <!-- Products Table -->
+        <div class="bg-white rounded-[24px] border border-black/5 overflow-hidden">
+          <div class="p-6 md:p-8 flex flex-wrap justify-between gap-4 items-center border-b border-black/5">
+            <h3 class="font-display text-2xl">Products • <span id="table-count">0</span></h3>
+            <div class="flex gap-2">
+              <input id="table-search" placeholder="Search products..." class="bg-[#f5f3f0] rounded-full px-5 h-10 text-sm outline-none w-[220px]" />
+              <select id="table-filter" class="bg-[#f5f3f0] rounded-full px-4 h-10 text-sm outline-none">
+                <option value="All">All categories</option>
+                <option>Apparel</option><option>Electronics</option><option>Footwear</option><option>Accessories</option><option>Home</option>
+              </select>
+            </div>
+          </div>
+          <div class="overflow-auto">
+            <table class="w-full text-sm">
+              <thead class="text-[11px] uppercase tracking-wide text-black/40 border-b border-black/5">
+                <tr><th class="text-left font-medium p-4">Product</th><th class="text-left font-medium p-4">Category</th><th class="text-left font-medium p-4">Price</th><th class="text-left font-medium p-4">Stock</th><th class="text-left font-medium p-4">Actions</th></tr>
+              </thead>
+              <tbody id="products-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Deploy Guide -->
+        <div class="bg-[#0a0a0a] text-white rounded-[24px] p-8">
+          <h3 class="font-display text-3xl leading-tight">Go live for free in 2 minutes</h3>
+          <div class="mt-6 grid md:grid-cols-3 gap-6 text-sm">
+            <div class="bg-white/10 rounded-2xl p-5"><p class="font-medium">1. GitHub Pages (simplest)</p><p class="text-white/60 mt-2 leading-relaxed">Push this folder to a GitHub repo → Settings → Pages → Deploy from main branch. Your store is live at username.github.io/repo</p><code class="block mt-3 bg-black rounded-lg p-2 text-[11px]">git init && git add . && git commit -m "launch" && gh repo create sellify --public --source=. --push</code></div>
+            <div class="bg-white/10 rounded-2xl p-5"><p class="font-medium">2. Netlify (drag & drop)</p><p class="text-white/60 mt-2 leading-relaxed">Go to app.netlify.com → Add new site → Deploy manually → Drag the entire folder. Free SSL, CDN, and preview URLs.</p><code class="block mt-3 bg-black rounded-lg p-2 text-[11px]">No build needed — static files only. Works instantly.</code></div>
+            <div class="bg-white/10 rounded-2xl p-5"><p class="font-medium">3. Vercel / Cloudflare Pages</p><p class="text-white/60 mt-2 leading-relaxed">vercel.com or pages.cloudflare.com → Import project → Framework: Other → Build command empty → Output: /</p><code class="block mt-3 bg-black rounded-lg p-2 text-[11px]">npx vercel --prod (zero config)</code></div>
+          </div>
+          <p class="text-[11px] text-white/40 mt-6">All data is stored in localStorage, so your products persist per browser. For multi-device sync, export JSON and re-import, or connect a free backend like Supabase / Firebase (guide in README).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { seedProducts } from './js/data.js';
+    const LS_PRODUCTS = 'sellify_products_v2';
+
+    function getProducts() {
+      try { const s = localStorage.getItem(LS_PRODUCTS); if (s) return JSON.parse(s); } catch {}
+      return seedProducts;
+    }
+    function saveProducts(p) { localStorage.setItem(LS_PRODUCTS, JSON.stringify(p)); }
+
+    let PRODUCTS = getProducts();
+
+    // Login
+    const loginScreen = document.getElementById('login-screen');
+    const dashboard = document.getElementById('dashboard');
+    const loginForm = document.getElementById('login-form');
+    const loginPass = document.getElementById('login-pass');
+    const loginError = document.getElementById('login-error');
+
+    function checkAuth() {
+      if (sessionStorage.getItem('sellify_admin') === '1') { loginScreen.classList.add('hidden'); dashboard.classList.remove('hidden'); initDashboard(); }
+    }
+    checkAuth();
+    loginForm.addEventListener('submit', e => {
+      e.preventDefault();
+      if (loginPass.value === 'admin123') {
+        sessionStorage.setItem('sellify_admin','1');
+        loginScreen.classList.add('hidden'); dashboard.classList.remove('hidden'); initDashboard();
+      } else { loginError.classList.remove('hidden'); }
+    });
+    document.getElementById('logout-btn').addEventListener('click', () => { sessionStorage.removeItem('sellify_admin'); location.reload(); });
+
+    function initDashboard() {
+      renderStats();
+      renderTable();
+      initForm();
+      initActions();
+    }
+
+    function renderStats() {
+      document.getElementById('stat-total').textContent = PRODUCTS.length;
+      const totalValue = PRODUCTS.reduce((s,p)=> s + p.price * (p.inventory||0),0);
+      document.getElementById('stat-value').textContent = '$' + Math.round(totalValue).toLocaleString();
+      document.getElementById('stat-low').textContent = PRODUCTS.filter(p=> (p.inventory||0) < 20).length;
+      document.getElementById('table-count').textContent = PRODUCTS.length;
+    }
+
+    function renderTable(filterText='', cat='All') {
+      const tbody = document.getElementById('products-tbody');
+      let list = [...PRODUCTS];
+      if (cat!=='All') list = list.filter(p=>p.category===cat);
+      if (filterText) { const q=filterText.toLowerCase(); list=list.filter(p=> (p.title+p.brand+p.category).toLowerCase().includes(q)); }
+      tbody.innerHTML = list.map(p=>`
+        <tr class="border-b border-black/5 hover:bg-[#fcfaf8]">
+          <td class="p-4"><div class="flex gap-3 items-center"><img src="${p.images[0]}" class="w-12 h-14 object-cover rounded-xl bg-[#f5f3f0]" /><div><p class="font-medium leading-tight">${p.title}</p><p class="text-xs text-black/50">${p.brand} • ${p.id}</p></div></div></td>
+          <td class="p-4"><span class="bg-[#f5f3f0] px-2.5 py-1 rounded-full text-xs">${p.category}</span></td>
+          <td class="p-4 font-medium">$${p.price}${p.compareAt?` <span class="line-through text-black/30 text-xs ml-1">$${p.compareAt}</span>`:''}</td>
+          <td class="p-4"><span class="${(p.inventory||0)<20?'text-orange-600 bg-orange-50':'bg-[#f5f3f0]'} px-2.5 py-1 rounded-full text-xs">${p.inventory||0} units</span></td>
+          <td class="p-4"><div class="flex gap-2"><button data-edit="${p.id}" class="w-8 h-8 grid place-items-center rounded-full bg-black text-white text-xs">✎</button><button data-del="${p.id}" class="w-8 h-8 grid place-items-center rounded-full bg-[#f5f3f0]">✕</button><button data-dup="${p.id}" class="w-8 h-8 grid place-items-center rounded-full border border-black/10">⎙</button></div></td>
+        </tr>
+      `).join('') || `<tr><td colspan="5" class="p-10 text-center text-black/40">No products found</td></tr>`;
+
+      tbody.querySelectorAll('[data-edit]').forEach(b=> b.addEventListener('click', ()=> loadToForm(b.dataset.edit)));
+      tbody.querySelectorAll('[data-del]').forEach(b=> b.addEventListener('click', ()=> { if(confirm('Delete this product?')) { PRODUCTS=PRODUCTS.filter(p=>p.id!==b.dataset.del); saveProducts(PRODUCTS); renderTable(document.getElementById('table-search').value, document.getElementById('table-filter').value); renderStats(); } }));
+      tbody.querySelectorAll('[data-dup]').forEach(b=> b.addEventListener('click', ()=> { const orig=PRODUCTS.find(p=>p.id===b.dataset.dup); if(orig){ const copy={...orig, id:'p'+Date.now(), title: orig.title+' (Copy)'}; PRODUCTS.unshift(copy); saveProducts(PRODUCTS); renderTable(); renderStats(); } }));
+    }
+
+    function initForm() {
+      const form = document.getElementById('product-form');
+      const status = document.getElementById('form-status');
+      form.addEventListener('submit', e=>{
+        e.preventDefault();
+        const id = document.getElementById('f-id').value || 'p'+Date.now();
+        const title = document.getElementById('f-title').value.trim();
+        const brand = document.getElementById('f-brand').value.trim() || 'SELLIFY';
+        const category = document.getElementById('f-category').value;
+        const subcategory = document.getElementById('f-subcategory').value.trim() || category;
+        const price = parseFloat(document.getElementById('f-price').value);
+        const compareAt = parseFloat(document.getElementById('f-compare').value) || null;
+        const inventory = parseInt(document.getElementById('f-inventory').value) || 0;
+        const imagesRaw = document.getElementById('f-images').value.trim();
+        const images = imagesRaw.split(',').map(s=>s.trim()).filter(Boolean);
+        const colorsRaw = document.getElementById('f-colors').value.trim();
+        const colors = colorsRaw ? colorsRaw.split(',').map(s=>{ const [name,hex]=s.split(':').map(x=>x.trim()); return {name:name||'Default', hex:hex||'#000000'}; }) : [{name:'Default', hex:'#0a0a0a'}];
+        const sizesRaw = document.getElementById('f-sizes').value.trim();
+        const sizes = sizesRaw ? sizesRaw.split(',').map(s=>s.trim()) : ['One Size'];
+        const desc = document.getElementById('f-desc').value.trim() || 'No description.';
+        const badge = document.getElementById('f-badge').value.trim() || null;
+        const rating = parseFloat(document.getElementById('f-rating').value) || 4.8;
+        const model = document.getElementById('f-model').value.trim() || null;
+
+        if (!title || !price || images.length===0) { status.textContent='Title, price, images required'; status.className='self-center text-xs text-red-500 ml-2'; return; }
+
+        const existingIdx = PRODUCTS.findIndex(p=>p.id===id);
+        const product = {
+          id, title, brand, category, subcategory, price, compareAt, inventory, inStock: inventory>0, featured: true, badge, rating, reviewsCount: existingIdx>=0 ? PRODUCTS[existingIdx].reviewsCount : Math.floor(Math.random()*120)+10,
+          images, colors, sizes, description: desc, features: ['Premium materials','Designed to last'], specs: { Material: 'Premium', Origin: 'Designed in India' }, reviews: existingIdx>=0 ? PRODUCTS[existingIdx].reviews : [], model3d: model
+        };
+        if (existingIdx>=0) PRODUCTS[existingIdx]=product; else PRODUCTS.unshift(product);
+        saveProducts(PRODUCTS);
+        renderTable(document.getElementById('table-search').value, document.getElementById('table-filter').value);
+        renderStats();
+        status.textContent='Saved ✓'; status.className='self-center text-xs text-green-600 ml-2';
+        setTimeout(()=> status.textContent='', 2000);
+        form.reset(); document.getElementById('f-id').value='';
+      });
+
+      document.getElementById('form-reset').addEventListener('click', ()=> { form.reset(); document.getElementById('f-id').value=''; });
+      document.getElementById('form-toggle')?.addEventListener('click', ()=> form.classList.toggle('hidden'));
+    }
+
+    function loadToForm(id) {
+      const p = PRODUCTS.find(x=>x.id===id); if(!p) return;
+      document.getElementById('f-id').value = p.id;
+      document.getElementById('f-title').value = p.title;
+      document.getElementById('f-brand').value = p.brand;
+      document.getElementById('f-category').value = p.category;
+      document.getElementById('f-subcategory').value = p.subcategory;
+      document.getElementById('f-price').value = p.price;
+      document.getElementById('f-compare').value = p.compareAt || '';
+      document.getElementById('f-inventory').value = p.inventory || 0;
+      document.getElementById('f-images').value = p.images.join(', ');
+      document.getElementById('f-colors').value = p.colors.map(c=>`${c.name}:${c.hex}`).join(', ');
+      document.getElementById('f-sizes').value = p.sizes.join(', ');
+      document.getElementById('f-desc').value = p.description;
+      document.getElementById('f-badge').value = p.badge || '';
+      document.getElementById('f-rating').value = p.rating;
+      document.getElementById('f-model').value = p.model3d || '';
+      document.getElementById('product-form').scrollIntoView({behavior:'smooth'});
+    }
+
+    function initActions() {
+      document.getElementById('table-search').addEventListener('input', e=> renderTable(e.target.value, document.getElementById('table-filter').value));
+      document.getElementById('table-filter').addEventListener('change', e=> renderTable(document.getElementById('table-search').value, e.target.value));
+
+      document.getElementById('export-btn').addEventListener('click', ()=>{
+        const blob = new Blob([JSON.stringify(PRODUCTS,null,2)], {type:'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href=url; a.download=`sellify-products-${new Date().toISOString().split('T')[0]}.json`; a.click(); URL.revokeObjectURL(url);
+      });
+
+      const importFile = document.getElementById('import-file');
+      document.getElementById('import-btn').addEventListener('click', ()=> importFile.click());
+      importFile.addEventListener('change', e=>{
+        const file = e.target.files[0]; if(!file) return;
+        const reader = new FileReader();
+        reader.onload = ev=> {
+          try { const data = JSON.parse(ev.target.result); if(Array.isArray(data)){ PRODUCTS=data; saveProducts(PRODUCTS); renderTable(); renderStats(); alert('Imported '+data.length+' products'); } else alert('Invalid JSON'); } catch(err){ alert('Invalid file'); }
+        };
+        reader.readAsText(file);
+      });
+
+      document.getElementById('seed-reset').addEventListener('click', ()=> { if(confirm('Reset to demo products? This will overwrite current products.')){ PRODUCTS=[...seedProducts]; saveProducts(PRODUCTS); renderTable(); renderStats(); } });
+      document.getElementById('clear-storage').addEventListener('click', ()=> { if(confirm('Clear all Sellify storage?')){ localStorage.clear(); PRODUCTS=[...seedProducts]; saveProducts(PRODUCTS); renderTable(); renderStats(); } });
+    }
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3b0d0887a0b0769',t:'MTc4OTQwMzgyOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
